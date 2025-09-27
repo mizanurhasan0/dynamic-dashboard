@@ -12,7 +12,7 @@ export function StatsCard({
 }: {
     title: string;
     value: string;
-    icon: any;
+    icon: unknown;
     change: { value: string; isPositive: boolean };
     data: number[];
     className?: string;
@@ -28,13 +28,13 @@ export function StatsCard({
                         <p className="text-3xl font-bold mt-1">{value}</p>
                     </div>
                     <div className="p-2 bg-primary/10 rounded-lg">
-                        {Icon}
+                        {Icon as React.ReactNode}
                     </div>
                 </div>
 
                 {/* Mini chart */}
                 <div className="flex items-end gap-1 h-12 mb-4">
-                    {data.map((point, index) => (
+                    {data.map((point: number, index: number) => (
                         <div
                             key={index}
                             className="flex-1 bg-gradient-to-t from-primary/20 to-primary/60 rounded-sm transition-all duration-300 hover:from-primary/40 hover:to-primary/80"

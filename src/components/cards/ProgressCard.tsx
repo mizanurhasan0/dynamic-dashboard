@@ -1,8 +1,8 @@
 'use client';
 import { ChevronRight } from "lucide-react";
+import React, { useState } from "react";
 import { Button } from "../button";
 import { Card, CardContent, CardHeader } from "./card";
-import React, { useState } from "react";
 
 export function ProgressCard({
     title,
@@ -15,7 +15,7 @@ export function ProgressCard({
     title: string;
     description: string;
     progress: number;
-    icon: any;
+    icon: unknown;
     color?: "blue" | "green" | "purple" | "orange";
     className?: string;
 }) {
@@ -40,7 +40,7 @@ export function ProgressCard({
             <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                     <div className={`p-3 rounded-lg bg-gradient-to-r ${colorClasses[color]} shadow-lg`}>
-                        {Icon}
+                        {Icon as React.ReactNode}
                     </div>
                     <div className="text-right">
                         <div className="text-2xl font-bold">{progress}%</div>

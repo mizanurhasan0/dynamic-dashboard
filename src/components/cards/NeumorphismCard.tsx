@@ -8,7 +8,7 @@ export function NeumorphismCard({
     trend,
     className = ""
 }: {
-    icon: any;
+    icon: unknown;
     title: string;
     description: string;
     value: string;
@@ -19,7 +19,7 @@ export function NeumorphismCard({
         <div className={`bg-gray-100 rounded-3xl p-6 shadow-[8px_8px_16px_#d1d9e6,-8px_-8px_16px_#ffffff] hover:shadow-[4px_4px_8px_#d1d9e6,-4px_-4px_8px_#ffffff] transition-all duration-300 group ${className}`}>
             {/* Icon container */}
             <div className="w-16 h-16 bg-gray-100 rounded-2xl shadow-[inset_4px_4px_8px_#d1d9e6,inset_-4px_-4px_8px_#ffffff] flex items-center justify-center mb-6 group-hover:shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff] transition-all duration-300">
-                {Icon}
+                {Icon as React.ReactNode}
             </div>
 
             {/* Content */}

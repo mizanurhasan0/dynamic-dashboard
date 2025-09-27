@@ -75,7 +75,7 @@ export function GlassMorphismCard({
                     {/* Stats */}
                     {stats && (
                         <div className="flex justify-between items-center pt-4 border-t border-white/10">
-                            {stats.map((stat, index) => (
+                            {stats.map((stat: { label: string; value: string }, index: number) => (
                                 <div key={index} className="text-center">
                                     <div className="text-lg font-bold text-white">{stat.value}</div>
                                     <div className="text-xs text-gray-400">{stat.label}</div>

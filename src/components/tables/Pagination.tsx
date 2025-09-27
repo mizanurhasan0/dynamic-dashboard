@@ -11,11 +11,11 @@ type PaginationProps = {
     totalPages: number;
     currentPage: number;
     pageSize: number;
-    sortedData: any[];
+    sortedData: unknown[];
     setPageSize: (size: number) => void;
     setCurrentPage: (page: number) => void;
 };
-    export default function Pagination({
+export default function Pagination({
     loading,
     pagination,
     totalPages,
@@ -25,9 +25,9 @@ type PaginationProps = {
     setPageSize,
     setCurrentPage,
 }: PaginationProps) {
-  return (
-    <>
-          {!loading && pagination.enabled && totalPages > 1 && (
+    return (
+        <>
+            {!loading && pagination.enabled && totalPages > 1 && (
                 <div className="flex items-center justify-between space-x-2 py-4">
                     <div className="flex-1 text-sm text-muted-foreground">
                         Showing {((currentPage - 1) * pageSize) + 1} to{" "}
@@ -95,6 +95,6 @@ type PaginationProps = {
                     </div>
                 </div>
             )}
-    </>
-  )
+        </>
+    )
 }
