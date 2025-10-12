@@ -1,27 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Login } from '@/components/auth/Login';
 import { SignUp } from '@/components/auth/SignUp';
 import { GoogleSignUp } from '@/components/auth/GoogleSignUp';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 type AuthMode = 'login' | 'signup' | 'google-signup';
 
 export default function AuthPage() {
     const [authMode, setAuthMode] = useState<AuthMode>('login');
     const [googleUser, setGoogleUser] = useState<any>(null);
-    const { login, signUp, googleSignUp, isLoading } = useAuth();
+    const { user, isAuthenticated, isLoading, login, register, logout } = useAuth();
     const router = useRouter();
+
+    // Redirect if already authenticated
+    useEffect(() => {
+        if (isAuthenticated && user) {
+            router.push('/dashboard');
+        }
+    }, [isAuthenticated, user, router]);
 
     const handleLogin = async (data: { email: string; password: string }) => {
         try {
-            await login(data.email, data.password);
+            await login.mutateAsync({
+                email: data.email,
+                password: data.password,
+            });
             router.push('/dashboard');
         } catch (error) {
             console.error('Login error:', error);
-            // Handle error (show toast, etc.)
+            // Error handling is done in the mutation callbacks
+            // You can add toast notifications here
         }
     };
 
@@ -33,16 +44,19 @@ export default function AuthPage() {
         confirmPassword: string;
     }) => {
         try {
-            await signUp({
-                firstName: data.firstName,
-                lastName: data.lastName,
+            // Combine firstName and lastName into name for the API
+            const name = `${data.firstName} ${data.lastName}`.trim();
+
+            await register.mutateAsync({
                 email: data.email,
-                password: data.password
+                password: data.password,
+                name: name,
             });
             router.push('/dashboard');
         } catch (error) {
             console.error('Sign up error:', error);
-            // Handle error (show toast, etc.)
+            // Error handling is done in the mutation callbacks
+            // You can add toast notifications here
         }
     };
 
@@ -52,11 +66,19 @@ export default function AuthPage() {
         lastName: string;
     }) => {
         try {
-            await googleSignUp(data);
+            // Google signup uses the same register endpoint
+            const name = `${data.firstName} ${data.lastName}`.trim();
+
+            await register.mutateAsync({
+                email: data.email,
+                password: '', // Google auth might not need a password, adjust based on your API
+                name: name,
+            });
             router.push('/dashboard');
         } catch (error) {
             console.error('Google sign up error:', error);
-            // Handle error (show toast, etc.)
+            // Error handling is done in the mutation callbacks
+            // You can add toast notifications here
         }
     };
 
@@ -73,12 +95,17 @@ export default function AuthPage() {
         setAuthMode('google-signup');
     };
 
-    if (isLoading) {
+    // Show loading state for auth operations
+    if (isLoading || login.isPending || register.isPending) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)]">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)] mx-auto"></div>
-                    <p className="mt-4 text-[var(--color-textSecondary)]">Loading...</p>
+                    <p className="mt-4 text-[var(--color-textSecondary)]">
+                        {login.isPending && 'Logging in...'}
+                        {register.isPending && 'Creating account...'}
+                        {isLoading && !login.isPending && !register.isPending && 'Loading...'}
+                    </p>
                 </div>
             </div>
         );

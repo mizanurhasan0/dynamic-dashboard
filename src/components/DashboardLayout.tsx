@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTheme } from '@/contexts/ThemeContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { Sidebar } from './Sidebar';
 import { ColorPaletteSelector } from './ColorPaletteSelector';
 import { cn } from '@/lib/utils';
@@ -38,9 +38,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         };
     }, []);
 
-    const handleLogout = () => {
-        logout();
-        router.push('/auth');
+    const handleLogout = async () => {
+        try {
+            await logout.mutateAsync();
+            router.push('/auth');
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Still redirect even if logout API fails
+            router.push('/auth');
+        }
     };
 
     return (
@@ -114,7 +120,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                                 <div className="w-8 h-8 bg-[var(--color-primary)]/10 rounded-full flex items-center justify-center">
                                     <User className="w-4 h-4 text-[var(--color-primary)]" />
                                 </div>
-                                <span className="text-sm font-medium">{user?.firstName} {user?.lastName}</span>
+                                <span className="text-sm font-medium">{user?.name}</span>
                             </button>
 
                             {/* User Menu Dropdown */}
@@ -128,7 +134,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                                 )}>
                                     <div className="px-3 py-2 border-b border-[var(--color-border)]">
                                         <p className="text-sm font-medium text-[var(--color-text)]">
-                                            {user?.firstName} {user?.lastName}
+                                            {user?.name}
                                         </p>
                                         <p className="text-xs text-[var(--color-textSecondary)]">
                                             {user?.email}

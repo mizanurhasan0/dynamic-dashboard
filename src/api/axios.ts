@@ -4,7 +4,8 @@ import { APIError } from '../utils/types';
 import { ENDPOINTS } from './endpoints';
 
 // Base URL for all API requests
-const BASE_URL = 'http://easy-com.work.gd';
+// Falls back to a local development server if not configured
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // In-memory access token storage (more secure than localStorage for access tokens)
 let accessToken: string | null = null;
