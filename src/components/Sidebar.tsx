@@ -168,12 +168,7 @@ export function Sidebar({ className }: SidebarProps) {
 
                 <nav className="space-y-2">
                     {menuData.map((item) => (
-                        <MenuItemComponent
-                            key={item.id}
-                            item={item}
-                            level={0}
-                            isCollapsed={isSidebarCollapsed}
-                        />
+                        <MenuItemComponent key={item.id} item={item} level={0} isCollapsed={isSidebarCollapsed} />
                     ))}
                 </nav>
             </div>
