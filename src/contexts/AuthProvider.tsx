@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, ReactNode } from 'react';
 import { useProvideAuth, UseProvideAuthReturn } from '../hooks/useProvideAuth';
+import { AuthState } from '../utils/types';
 
 // ============================================================================
 // Context
@@ -18,14 +19,15 @@ const AuthContext = createContext<UseProvideAuthReturn | undefined>(undefined);
 
 interface AuthProviderProps {
     children: ReactNode;
+    initialAuthState?: Partial<AuthState>;
 }
 
 // ============================================================================
 // Provider Component
 // ============================================================================
 
-export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
-    const auth = useProvideAuth();
+export function AuthProvider({ children, initialAuthState }: AuthProviderProps): JSX.Element {
+    const auth = useProvideAuth(initialAuthState);
 
     return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }

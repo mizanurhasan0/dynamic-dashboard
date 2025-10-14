@@ -18,9 +18,9 @@ export interface UseProvideAuthReturn extends AuthState {
 /**
  * Internal hook for managing auth state
  */
-export function useProvideAuth(): UseProvideAuthReturn {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+export function useProvideAuth(initialAuthState?: Partial<AuthState>): UseProvideAuthReturn {
+    const [user, setUser] = useState<User | null>(initialAuthState?.user || null);
+    const [isLoading, setIsLoading] = useState<boolean>(initialAuthState?.isLoading ?? true);
 
     /**
      * Initialize auth state from stored tokens
@@ -87,11 +87,15 @@ export function useProvideAuth(): UseProvideAuthReturn {
     }, []);
 
     /**
-     * Initialize auth on mount
+     * Initialize auth on mount (skip if we have initial state)
      */
     useEffect(() => {
-        initializeAuth();
-    }, [initializeAuth]);
+        if (!initialAuthState) {
+            initializeAuth();
+        } else {
+            setIsLoading(false);
+        }
+    }, [initializeAuth, initialAuthState]);
 
     return {
         user,
