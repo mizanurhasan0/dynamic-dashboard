@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { User, AuthState } from '../utils/types';
 import { getAccessToken } from '../api/axios';
 import { storageAdapter } from '../utils/storage';
-import { getUserFromToken } from '../services/auth.service';
+import { getUserFromToken, refreshToken } from '../services/auth.service';
 
 export interface UseProvideAuthReturn extends AuthState {
     setUser: (user: User | null) => void;
@@ -25,18 +25,45 @@ export function useProvideAuth(): UseProvideAuthReturn {
     /**
      * Initialize auth state from stored tokens
      */
-    const initializeAuth = useCallback(() => {
+    const initializeAuth = useCallback(async () => {
         const token = getAccessToken();
-        const refreshToken = storageAdapter.getItem('refresh_token');
+        const refreshTokenValue = storageAdapter.getItem('refresh_token');
 
-        if (token && refreshToken) {
-            // Try to extract user from token
+        console.log('Initializing auth:', { hasToken: !!token, hasRefreshToken: !!refreshTokenValue });
+
+        if (token && refreshTokenValue) {
+            // Both tokens exist, extract user from access token
             const userData = getUserFromToken(token);
             if (userData) {
+                console.log('User data extracted from token:', userData);
                 setUser(userData);
+                setIsLoading(false);
+                return;
+            } else {
+                console.warn('Failed to extract user data from token, trying refresh');
             }
         }
 
+        if (refreshTokenValue && !token) {
+            // Only refresh token exists, try to refresh access token
+            console.log('Only refresh token found, attempting to refresh access token');
+            try {
+                const newTokens = await refreshToken(refreshTokenValue);
+                const userData = getUserFromToken(newTokens.accessToken);
+                if (userData) {
+                    console.log('Successfully refreshed tokens and restored user:', userData);
+                    setUser(userData);
+                    setIsLoading(false);
+                    return;
+                }
+            } catch (error) {
+                console.error('Failed to refresh token:', error);
+                // Clear invalid refresh token
+                storageAdapter.removeItem('refresh_token');
+            }
+        }
+
+        console.log('No valid tokens found, user not authenticated');
         setIsLoading(false);
     }, []);
 

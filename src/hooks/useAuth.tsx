@@ -68,13 +68,17 @@ export function useAuth(): UseAuthReturn {
     const loginMutation = useMutation<{ user: User; tokens: Tokens }, APIError, LoginRequest>({
         mutationFn: loginService,
         onMutate: () => {
+            console.log('Login mutation started');
             setIsLoading(true);
         },
         onSuccess: (data) => {
+            console.log(data);
+            console.log('Login successful:', { user: data.user, hasTokens: !!data.tokens });
             setUser(data.user);
             setIsLoading(false);
         },
-        onError: () => {
+        onError: (error) => {
+            console.error('Login failed:', error);
             setIsLoading(false);
         },
     });
@@ -86,13 +90,16 @@ export function useAuth(): UseAuthReturn {
     const registerMutation = useMutation<{ user: User; tokens: Tokens }, APIError, RegisterRequest>({
         mutationFn: registerService,
         onMutate: () => {
+            console.log('Register mutation started');
             setIsLoading(true);
         },
         onSuccess: (data) => {
+            console.log('Register successful:', { user: data.user, hasTokens: !!data.tokens });
             setUser(data.user);
             setIsLoading(false);
         },
-        onError: () => {
+        onError: (error) => {
+            console.error('Register failed:', error);
             setIsLoading(false);
         },
     });

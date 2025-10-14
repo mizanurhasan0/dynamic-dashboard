@@ -18,7 +18,9 @@ export default function AuthPage() {
     // Redirect if already authenticated
     useEffect(() => {
         if (isAuthenticated && user) {
-            router.push('/dashboard');
+            console.log('User authenticated, redirecting to dashboard:', { user, isAuthenticated });
+            // Use replace to prevent back button issues
+            router.replace('/dashboard');
         }
     }, [isAuthenticated, user, router]);
 
@@ -28,7 +30,7 @@ export default function AuthPage() {
                 email: data.email,
                 password: data.password,
             });
-            router.push('/dashboard');
+            // Redirect will be handled by the useEffect when user state updates
         } catch (error) {
             console.error('Login error:', error);
             // Error handling is done in the mutation callbacks
@@ -52,7 +54,7 @@ export default function AuthPage() {
                 password: data.password,
                 name: name,
             });
-            router.push('/dashboard');
+            // Redirect will be handled by the useEffect when user state updates
         } catch (error) {
             console.error('Sign up error:', error);
             // Error handling is done in the mutation callbacks
@@ -74,7 +76,7 @@ export default function AuthPage() {
                 password: '', // Google auth might not need a password, adjust based on your API
                 name: name,
             });
-            router.push('/dashboard');
+            // Redirect will be handled by the useEffect when user state updates
         } catch (error) {
             console.error('Google sign up error:', error);
             // Error handling is done in the mutation callbacks

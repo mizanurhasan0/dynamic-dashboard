@@ -8,6 +8,8 @@ import { ENDPOINTS } from './endpoints';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 // In-memory access token storage (more secure than localStorage for access tokens)
+// Note: Access tokens are short-lived and stored in memory for security
+// They will be refreshed automatically when needed using the refresh token
 let accessToken: string | null = null;
 
 // Track if we're currently refreshing to avoid multiple refresh attempts
@@ -31,9 +33,24 @@ function onTokenRefreshed(token: string): void {
 
 /**
  * Get current access token
+ * First checks memory, then falls back to cookies
  */
 export function getAccessToken(): string | null {
-    return accessToken;
+    if (accessToken) {
+        console.log('Access token found in memory');
+        return accessToken;
+    }
+
+    // Fallback to cookie storage for page reload persistence
+    const tokenFromCookie = storageAdapter.getItem('access_token');
+    if (tokenFromCookie) {
+        console.log('Access token restored from cookie');
+        accessToken = tokenFromCookie;
+        return tokenFromCookie;
+    }
+
+    console.log('No access token found');
+    return null;
 }
 
 /**
@@ -49,6 +66,7 @@ export function setAccessToken(token: string | null): void {
 export function clearTokens(): void {
     accessToken = null;
     storageAdapter.removeItem('refresh_token');
+    storageAdapter.removeItem('access_token');
 }
 
 /**

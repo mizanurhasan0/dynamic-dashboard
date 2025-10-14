@@ -145,9 +145,11 @@ class CookieStorageAdapter implements StorageAdapter {
 
     setItem(key: string, value: string): void {
         if (typeof document === 'undefined') return;
-        // Set cookie with secure flags (adjust as needed)
+        // Set cookie with secure flags and expiration
         const secure = typeof window !== 'undefined' && window.location.protocol === 'https:' ? '; Secure' : '';
-        document.cookie = `${key}=${encodeURIComponent(value)}; Path=/; SameSite=Strict${secure}`;
+        // Set different expiration times based on token type
+        const maxAge = key === 'access_token' ? '; Max-Age=3600' : '; Max-Age=604800'; // 1 hour for access, 7 days for refresh
+        document.cookie = `${key}=${encodeURIComponent(value)}; Path=/; SameSite=Strict${secure}${maxAge}`;
     }
 
     removeItem(key: string): void {
@@ -169,7 +171,8 @@ class CookieStorageAdapter implements StorageAdapter {
 // Default Storage Adapter Instance
 // ============================================================================
 
-let currentAdapter: StorageAdapter = new LocalStorageAdapter();
+// Use CookieStorageAdapter for better security (httpOnly cookies would be ideal)
+let currentAdapter: StorageAdapter = new CookieStorageAdapter();
 
 /**
  * Get current storage adapter

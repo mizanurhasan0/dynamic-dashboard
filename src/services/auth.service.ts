@@ -27,11 +27,16 @@ import { User, Tokens } from '../utils/types';
 
 export async function login(credentials: LoginRequest): Promise<{ user: User; tokens: Tokens }> {
     const response = await apiClient.post<LoginResponse>(ENDPOINTS.AUTH.LOGIN, credentials);
-    const { access_token, refresh_token, user } = response.data;
-
+    console.log(' response:', response);
+    const { access_token, refresh_token, user } = response.data.data;
     // Store tokens
     setAccessToken(access_token);
     storageAdapter.setItem('refresh_token', refresh_token);
+    // Also store access token in cookies for persistence across page reloads
+    // Note: In production, consider using httpOnly cookies set by the backend
+    storageAdapter.setItem('access_token', access_token);
+
+    console.log('Tokens stored successfully');
 
     return {
         user,
@@ -53,6 +58,8 @@ export async function register(data: RegisterRequest): Promise<{ user: User; tok
     // Store tokens
     setAccessToken(access_token);
     storageAdapter.setItem('refresh_token', refresh_token);
+    // Also store access token in cookies for persistence across page reloads
+    storageAdapter.setItem('access_token', access_token);
 
     return {
         user,
@@ -79,6 +86,8 @@ export async function refreshToken(refreshTokenValue: string): Promise<Tokens> {
     if (refresh_token) {
         storageAdapter.setItem('refresh_token', refresh_token);
     }
+    // Also update access token in cookies
+    storageAdapter.setItem('access_token', access_token);
 
     return {
         accessToken: access_token,
