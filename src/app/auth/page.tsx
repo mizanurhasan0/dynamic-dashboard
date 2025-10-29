@@ -6,16 +6,17 @@ import GoogleSignUpForm from './components/GoogleSignUpForm';
 type AuthMode = 'login' | 'signup' | 'google-signup';
 
 interface AuthPageProps {
-    searchParams: {
+    searchParams: Promise<{
         mode?: AuthMode;
-    };
+    }>;
 }
 
 export default async function AuthPage({ searchParams }: AuthPageProps) {
     // Ensure user is not authenticated (redirect to dashboard if they are)
     await requireGuest();
 
-    const mode = searchParams.mode || 'login';
+    const resolvedSearchParams = await searchParams;
+    const mode = resolvedSearchParams?.mode || 'login';
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-[var(--color-background)] p-4">

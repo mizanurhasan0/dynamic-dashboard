@@ -31,6 +31,16 @@ import {
     Zap,
     TrendingUp,
     Activity,
+    PlusCircle,
+    List,
+    RotateCcw,
+    FolderTree,
+    Folders,
+    FolderPlus,
+    CheckCircle,
+    XCircle,
+    UserCircle,
+    Building2,
 } from 'lucide-react';
 
 const iconMap = {
@@ -57,6 +67,16 @@ const iconMap = {
     Zap,
     TrendingUp,
     Activity,
+    PlusCircle,
+    List,
+    RotateCcw,
+    FolderTree,
+    Folders,
+    FolderPlus,
+    CheckCircle,
+    XCircle,
+    UserCircle,
+    Building2,
 };
 
 interface MenuItemComponentProps {

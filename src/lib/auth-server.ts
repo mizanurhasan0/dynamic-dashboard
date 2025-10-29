@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 // Server-side authentication utilities
 export async function getServerSideAuth() {
     const cookieStore = cookies();
-    const token = cookieStore.get('access_token')?.value;
+    const token = (await cookieStore).get('access_token')?.value;
 
     if (!token) {
         return { isAuthenticated: false, user: null };
